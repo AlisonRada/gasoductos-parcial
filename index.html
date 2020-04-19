@@ -7,10 +7,9 @@
     <title>Login Gasoductos</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css?family=Oswald:300,700|Varela+Round" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i">
+    <!--<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i">-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.css">
-</head>
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 <body>
     <nav class="navbar navbar-light navbar-expand-lg fixed-top bg-white clean-navbar">
         <div class="container">
@@ -28,16 +27,16 @@
                 <div class="block-heading">
                     <h2 class="text-info">Log In</h2>
                 </div>
-                <form class="form-signin">
+                <form class="form-signin" action="#" method="post">
                     <!--Email input-->
                     <div class="form-group">
-                        <label for="inputEmail" class="sr-only">Email address</label>
-                        <input type="email" id="inputEmail" name="inputEmail" class="form-control" placeholder="Email address" autofocus="">
+                        <label for="inputEmail" class="sr-only">Correo electrónico</label>
+                        <input type="email" id="inputEmail" name="inputEmail" class="form-control" placeholder="Email address">
                         <!--<input type="email" id="inputEmail" name="inputEmail" class="form-control" placeholder="Email address" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required autofocus="">-->
                     </div>
                     <!--Password input-->
                     <div class="form-group">
-                        <label for="inputPassword" class="sr-only">Password</label>
+                        <label for="inputPassword" class="sr-only">Contraseña</label>
                         <input type="password" id="inputPassword" name="inputPassword" class="form-control" placeholder="Password">
                         <!--<input type="password" id="inputPassword" name="inputPassword" class="form-control" placeholder="Password" minlength="8" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>-->
                     </div>
@@ -49,9 +48,73 @@
                         </div>
                     </div>
                     <!--Submit button-->
-                    <a href="lista-operarios.html" class="btn btn-primary btn-block">Log In</a>
+                    <button id="login" class="btn btn-primary btn-block">Log In</button>
+                    
+                    <div class="links">
+                        <p><a class="float-left" href="#" id="passwdReset">¿Olvidó su contraseña?</a></p>
+                        <p>
+                            <a class="float-right" id="registro" data-toggle="modal" data-target="#signUpModal">
+                            Sign up
+                            </a></p>
+                        <div class="clear"></div>
+                    </div>
                 </form>
             </div>
+            
+            <div class="modal fade" id="signUpModal" tabindex="-1" role="dialog" aria-labelledby="signUpModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="signUpModal">Registro</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                                <div class="form-group">
+                                    <label for="nameUser">Nombre representante legal</label>
+                                    <input type="text" class="form-control" id="nameUser" name="nameUser" aria-describedby="Name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="tipo">Tipo de identificación</label>
+                                    <select id="tipo" name="tipo">
+                                    <option value="RC">Registro Civil</option>
+                                    <option value="TI">Tarjeta de identidad</option>
+                                    <option value="CC">Cédula de ciudadanía</option>
+                                    <option value="CE">Cedula de extranjería</option>
+                                    <option value="PA">Pasaporte</option>
+                                </div>
+                                <div class="form-group">
+                                    <label for="id">Número de identificación</label>
+                                    <input type="text" oninput="this.value=this.value.replace(/(?![0-9]|\.)./gmi,'')" id="id" name="id" aria-describedby="Name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="signUpEmail">Correo electrónico <address></address></label>
+                                    <input type="text" class="form-control" id="signUpEmail" name="signUpEmail" aria-describedby="Name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="foto">Imagen de la empresa</label>
+                                    <input type="file" class="form-control" id="foto" name="foto">
+                                </div>
+                                <div class="form-group">
+                                    <label for="entName">Nombre de la empresa</label>
+                                    <input type="email" class="form-control" id="entName" name="entName" aria-describedby="emailHelp">
+                                </div>
+                                <div class="form-group">
+                                    <label for="passwdSignUp">Contraseña</label>
+                                    <input type="password" class="form-control" id="passwdSignUp" name="passwdSignUp">
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button id="signup">Registrarme</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
         </section>
     </main>
     <footer class="page-footer dark">
@@ -59,5 +122,30 @@
             <p>© 2020 Copyright Alison Rada <strong><a href="wireframes.pdf">Wireframes</a></strong></p>
         </div>
     </footer>
+
+
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-firestore.js"></script>
+
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-analytics.js"></script>
+
+
+   <script src="scripts/auth.js"></script>
+
+    <script>
+        init_firebase();
+    </script>
+
 </body>
 </html>
