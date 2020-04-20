@@ -22,7 +22,8 @@ $("#login").click(function() {
     var password = document.getElementById('inputPassword').value;
     firebase.auth().signInWithEmailAndPassword(email, password)
         .then(function(){
-            window.location.href = "lista-operarios.html"; 
+            uid = firebase.auth().currentUser.uid;
+            window.location.href = "Empresa.html?id="+uid; 
         })
         .catch(function(error) {
             var errorCode = error.code;
@@ -54,6 +55,7 @@ $("#signup").click(function() {
     event.preventDefault();
     username = $("#signUpEmail").val();
     password = $("#passwdSignUp").val();
+
     firebase.auth().createUserWithEmailAndPassword(username, password).catch(function(error) {
         var errorCode = error.code;
         var errorMessage = error.message;
