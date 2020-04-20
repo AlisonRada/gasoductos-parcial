@@ -13,12 +13,7 @@
 <body>
     <nav class="navbar navbar-light navbar-expand-lg fixed-top bg-white clean-navbar">
         <div class="container">
-            <a class="navbar-brand logo" href="#"> <img src="assets/img/natural gas.svg" width="50" height="50"> Gasoductos</a>
-            <button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
-            <div class="collapse navbar-collapse"
-                id="navcol-1">
-                <ul class="nav navbar-nav ml-auto"></ul>
-            </div>
+            <a class="navbar-brand logo" href="#"> <img src="assets/img/natural gas.svg" width="50" height="50"> Gasoductos</a>    
         </div>
     </nav>
     <main class="page login-page">
@@ -44,7 +39,7 @@
                     <div class="form-group">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="checkbox">
-                            <label class="form-check-label" for="checkbox">Remember me</label>
+                            <label class="form-check-label" for="checkbox">Recordarme</label>
                         </div>
                     </div>
                     <!--Submit button-->
@@ -60,21 +55,21 @@
                     </div>
                 </form>
             </div>
-            
+
             <div class="modal fade" id="signUpModal" tabindex="-1" role="dialog" aria-labelledby="signUpModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="signUpModal">Registro</h5>
+                            <h5 class="modal-title" id="signUpModal">Registro empresa</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                       </button>
                         </div>
                         <div class="modal-body">
-                            <form>
+                            <form  id="signUpForm" name="signUpForm">
                                 <div class="form-group">
                                     <label for="nameUser">Nombre representante legal</label>
-                                    <input type="text" class="form-control" id="nameUser" name="nameUser" aria-describedby="Name">
+                                    <input type="text" class="form-control" id="nameUser" name="nameUser" aria-describedby="Name" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="tipo">Tipo de identificación</label>
@@ -87,11 +82,14 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="id">Número de identificación</label>
-                                    <input type="text" oninput="this.value=this.value.replace(/(?![0-9]|\.)./gmi,'')" id="id" name="id" aria-describedby="Name">
+                                    <input type="text" oninput="this.value=this.value.replace(/(?![0-9]|\.)./gmi,'')" id="id" name="id" aria-describedby="Name" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="signUpEmail">Correo electrónico <address></address></label>
-                                    <input type="text" class="form-control" id="signUpEmail" name="signUpEmail" aria-describedby="Name">
+                                    <input type="text" class="form-control" id="signUpEmail" name="signUpEmail" aria-describedby="Name" required>
+                                    <div class="invalid-feedback">
+                                        Please choose a username.
+                                    </div>
                                 </div>
                                 <div class="form-group">
                                     <label for="foto">Imagen de la empresa</label>
@@ -99,17 +97,17 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="entName">Nombre de la empresa</label>
-                                    <input type="email" class="form-control" id="entName" name="entName" aria-describedby="emailHelp">
+                                    <input type="email" class="form-control" id="entName" name="entName" aria-describedby="emailHelp" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="passwdSignUp">Contraseña</label>
-                                    <input type="password" class="form-control" id="passwdSignUp" name="passwdSignUp">
+                                    <input type="password" class="form-control" id="passwdSignUp" name="passwdSignUp" required>
                                 </div>
                             </form>
                         </div>
                         <div class="modal-footer">
                             <button class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <button id="signup">Registrarme</button>
+                            <button type="submit" id="signUp">Registrarme</button>
                         </div>
                     </div>
                 </div>
