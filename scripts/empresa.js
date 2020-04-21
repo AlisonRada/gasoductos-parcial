@@ -1,4 +1,5 @@
 
+
 id="";
 window.onload = function () {
     var url = document.location.href,
@@ -11,9 +12,8 @@ window.onload = function () {
         
     id=data.id;
     console.log(id);
-
     this.crearEncuesta();
-    
+   
     firebase.database().ref('/empresas/' + id).once('value').then(function(snapshot) {
         var name = (snapshot.val() && snapshot.val().empresa) || 'Anonymous';
         
@@ -72,45 +72,12 @@ function cargarLista(){
     firebase.database().ref('/empresas/' + id+"/empleados").once('value').then(function(snapshot){
        
         datos=snapshot.val();
-        console.log(datos); 
         cant_empleados=0;
         document.getElementById('tabla').innerHTML ="";  
         for(var k in datos) {
+            escribirUsuario(k);
             cant_empleados++;
-            if (datos[k].Habilitado==1) {
-            var estado='<span class="text-white bg-success">Habilitado</span>';
-            } else {
-            var estado= '<span class="text-white bg-secondary">No Habilitado</span>' ; 
-            }
             
-        tabla.innerHTML+=   `
-        <tr>
-										<td>
-											<img src="../assets/img/gallina.png" alt="">
-											${datos[k].Nombre}
-											
-										</td>
-										<td class="text-center">
-											${datos[k].Direccion}
-										</td>
-										<td class="text-center">
-											${datos[k].contraseña}
-										</td>
-                                        <td class="text-center">
-                                        <span onClick="estado('${datos[k].id}','${datos[k].Habilitado}')">${estado}</span>
-                                        </td>
-                                        <td class="text-center">
-                                        <button  class="btn text-white bg-danger" onClick="_eliminar('${datos[k].id}')">Eliminar</button>
-                                         </td>
-                                         <td class="text-center">
-                                         <a  class="btn text-white bg-warning"  data-toggle="modal" data-target="#myModal" onClick="_editar('${datos[k].id}','${datos[k].Nombre}','${datos[k].contraseña}','${datos[k].Direccion}')">Editar</a>
-                                          </td>
-										
-										<td style="width: 15%;" class="text-center">
-											<a href="evaluacion.html" class="btn text-white bg-primary">Do test</a>
-										</td>
-									</tr>
-      `;
       
 
         
@@ -210,14 +177,55 @@ function subirEncuesta(){
 
 
 }
+function escribirUsuario(id){
+    firebase.database().ref('/empleados/'+id).once('value').then(function(snapshot){
+        empleado=snapshot.val();
+        console.log(empleado);
+        if (empleado.habilitado==1) {
+            var estado='<span class="text-white bg-success">Habilitado</span>';
+            } else {
+            var estado= '<span class="text-white bg-secondary">No Habilitado</span>' ; 
+            }
+            
+        tabla.innerHTML+=   `
+        <tr>
+                                        <td>
+                                            <img src="../assets/img/gallina.png" alt="">
+                                            ${empleado.nombre}
+                                            
+                                        </td>
+                                        <td class="text-center">
+                                            ${empleado.direccion}
+                                        </td>
+                                        <td class="text-center">
+                                            *******
+                                        </td>
+                                        <td class="text-center">
+                                        <span onClick="estado('${id}','${empleado.habilitado}')">${estado}</span>
+                                        </td>
+                                        <td class="text-center">
+                                        <button  class="btn text-white bg-danger" onClick="_eliminar('${id}')">Eliminar</button>
+                                         </td>
+                                         <td class="text-center">
+                                         <a  class="btn text-white bg-warning"  data-toggle="modal" data-target="#myModal" onClick="_editar('${id}','${empleado.nombre}','*****','${empleado.direccion}')">Editar</a>
+                                          </td>
+                                        
+                                        <td style="width: 15%;" class="text-center">
+                                            <a href="evaluacion.html" class="btn text-white bg-primary">Do test</a>
+                                        </td> 
+                                    </tr>
+      `;
+
+    });
+}
 function estado(identificador,estado){
    
     var updates = {};
     if (estado==1) {
-        updates["empresas/" + id+"/empleados/"+identificador+"/Habilitado"] = 0;
+        updates["empleados/" + identificador+"/habilitado"] = 0;
         firebase.database().ref().update(updates);
     }else{
-        updates["empresas/" + id+"/empleados/"+identificador+"/Habilitado"] = 1;
+        updates["empleados/" + identificador+"/habilitado"] = 1;
         firebase.database().ref().update(updates);
     }
     cargarLista();
@@ -232,11 +240,11 @@ function _editar(identificador,nombre,contraseña,direccion){
 }
 function _guardar(identificador){
     var updates = {};
-    updates["empresas/" +id+"/empleados/"+identificador+"/Nombre"]=document.getElementById('edit_nombre').value.toString();
+    updates["/empleados/"+identificador+"/nombre"]=document.getElementById('edit_nombre').value.toString();
     
-    updates["empresas/" +id+"/empleados/"+identificador+"/Direccion"]=document.getElementById('edit_direccion').value.toString();
+    updates["/empleados/"+identificador+"/direccion"]=document.getElementById('edit_direccion').value.toString();
    
-    updates["empresas/" +id+"/empleados/"+identificador+"/contraseña"]=document.getElementById('edit_contraseña').value.toString();
+    updates["/empleados/"+identificador+"/contraseña"]=document.getElementById('edit_contraseña').value.toString();
     firebase.database().ref().update(updates);
     cargarLista();
 
@@ -244,6 +252,6 @@ function _guardar(identificador){
 function _eliminar(identificador) {
     
     
-    firebase.database().ref("empresas/" + id+"/empleados/"+identificador).remove();
+    firebase.database().ref("/empleados/"+identificador).remove();
     cargarLista();
 }
