@@ -22,7 +22,9 @@
 					<ul class="nav navbar-nav ml-auto"></ul>
 				</div>
 				<ul class="nav navbar-nav ml-auto">
+					<li class="nav-item"><a  class="float-right" id="registro" data-toggle="modal" data-target="#signUpEmployeeModal">Agregar empleado</a>
 					<li class="nav-item" ><span class="glyphicon glyphicon-user"></span><span id="empresa" data-toggle="modal" data-target=".bd-example-modal-sm">Large modal</span></li>
+					
 					<li class="nav-item"><a href="index.html"><span class="glyphicon glyphicon-log-in"></span> Log out</a></li>
 				</ul>
 			</div>
@@ -37,53 +39,49 @@
 					Crear encuesta
 				  </a>
 			</div>
+			<div class="modal fade" id="signUpEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="signUpEmployeeModalLabel" aria-hidden="true">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="signUpEmployeeTitle">Registro empleado</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					  </button>
+						</div>
+						<div class="modal-body">
+							<form name="signUpEmployeeForm">
+								<div class="form-group">
+									<label for="nameEmployee">Nombre</label>
+									<input type="text" class="form-control" id="nameEmployee" name="nameEmployee" aria-describedby="Name" required>
+								</div>
+								<div class="form-group">
+									<label for="signUpEmployeeEmail">Correo electrónico <address></address></label>
+									<input type="text" class="form-control" id="signUpEmployeeEmail" name="signUpEmployeeEmail" aria-describedby="Name" required>
+								</div>
+								<div class="form-group">
+									<label for="addressEmployee">Dirección</label>
+									<input type="text" class="form-control" id="addressEmployee" name="addressEmployee" aria-describedby="Name">
+								</div>
+								<div class="form-group">
+									<label for="fotoEmployee">Imagen</label>
+									<input type="file" class="form-control" id="fotoEmployee" name="foto">
+								</div>
+								<div class="form-group">
+									<label for="passwdSignUpEmployee">Contraseña</label>
+									<input type="password" class="form-control" id="passwdSignUpEmployee" name="passwdSignUpEmployee" required>
+								</div>
+							</form>
+						</div>
+						<div class="modal-footer">
+							<button class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+							<button type="submit" id="signUpEmployee">Registrar</button>
+						</div>
+					</div>
+				</div>
+			</div>
 			
 			<div class="collapse" id="crearEncuesta">
-				<!-- <div class="card card-body">
-					<form>
-						<div class="form-group">
-							<label for="inputAddress" >Enunciado #1</label>
-							<input type="text" class="form-control" id="enun1" placeholder="¿Le gusta la cañandoga?">
-						  </div>
-						<div class="form-row">
-						  <div class="form-group col-md-3">
-							<input type="text" class="form-control" id="op1P1" placeholder="opción 1">
-						  </div>
-						  <div class="form-group col-md-3">
-							<input type="text" class="form-control" id="op2P1" placeholder="opción 2">
-						  </div>
-						  <div class="form-group col-md-3">
-							<input type="text" class="form-control" id="op3P1" placeholder="opción 3">
-						  </div>
-						  <div class="form-group col-md-3">
-							<input type="text" class="form-control" id="op4P1" placeholder="opción 3">
-						  </div>
-						</div>
-						<div class="row">
-							<div class="col-md-3">
-							  <label class="mr-sm-2" for="inlineFormCustomSelect">Respuesta correcta</label>
-							  <select class="custom-select mr-sm-2" id="correcta1">
-							   <option value="1">Opción 1</option>
-								<option value="2">Opción 2</option>
-								<option value="3">Opción 3</option>
-								<option value="4">Opción 4</option>
-							  </select>
-							</div>
-						  
-						  <div class="col-md-3">
-							<label class="mr-sm-2" for="inlineFormCustomSelect">Valor de la pregunta</label>
-							<select class="custom-select mr-sm-2" id="valor1">
-							 <option value="1">1</option>
-							  <option value="2">2</option>
-							  <option value="3">3</option>
-							</select>
-						  </div>
-						</div>
-						
-						
-						<button type="submit" class="btn btn-primary">Sign in</button>
-					  </form>
-				</div> -->
+				
 			  </div>
 			  <div id="lista_operarios"></div>
 			</div>
@@ -180,7 +178,12 @@
    https://firebase.google.com/docs/web/setup#available-libraries -->
   <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-analytics.js"></script>
   
- 
+  <script src="scripts/auth.js"></script>
+
+  <script>
+	  init_firebase();
+  </script>
 <script src="scripts/empresa.js"></script>
+
 </body>
 </html>

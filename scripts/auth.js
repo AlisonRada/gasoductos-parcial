@@ -11,6 +11,7 @@ function init_firebase() {
     };
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
+    secondaryApp = firebase.initializeApp(firebaseConfig, "Secondary");
 }
 
 myRegex = /image/;
@@ -22,7 +23,8 @@ $("#login").click(function() {
     var password = document.getElementById('inputPassword').value;
     firebase.auth().signInWithEmailAndPassword(email, password)
         .then(function(){
-            window.location.href = "lista-operarios.html"; 
+            uid = firebase.auth().currentUser.uid;
+            window.location.href = "empresa.html?id="+uid; 
         })
         .catch(function(error) {
             var errorCode = error.code;
@@ -61,12 +63,12 @@ $("#signup").click(function() {
         console.log(errorMessage);
     });
     // autenticacion con firebase
-    firebase.auth().signInWithEmailAndPassword(username, password).catch(function(error) {
+     firebase.auth().signInWithEmailAndPassword(username, password).catch(function(error) {
         var errorCode = error.code;
         var errorMessage = error.message;
 
         console.log(errorMessage);
-    });
+    }); 
     
     file = document.querySelector('#foto').files[0];
     enterprise_name = $("#entName").val();
@@ -92,6 +94,8 @@ $("#signup").click(function() {
     firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
             uid = firebase.auth().currentUser.uid;
+            console.log("uid:"+uid);
+            
             firebase.database().ref("empresas/" + uid).set({
                 "representante": $("#nameUser").val(),
                 "tipo_id": $("#tipo").val(),
@@ -105,9 +109,12 @@ $("#signup").click(function() {
         icon: 'success',
         title: 'Empresa registrada, ya puede ingresar',
     });
+    
+    logout();
 });
 
 $("#logout").click(function() {
+   
     logout();
 });
 
@@ -116,9 +123,13 @@ $("#passwdReset").click(function(){
 });
 
 function logout(){
-    if (firebase.auth().currentUser) {
-        firebase.auth().signOut();
-    }
+   /*  if (firebase.auth().currentUser) { */
+        firebase.auth().signOut().then(function() {
+            console.log("Salió");
+          }).catch(function(error) {
+           console.log("No salió");
+          });;
+    /* } */
 }
 
 function sendPasswordReset() {

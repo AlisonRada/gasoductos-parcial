@@ -1,3 +1,4 @@
+
 id="";
 window.onload = function () {
     var url = document.location.href,
@@ -9,8 +10,10 @@ window.onload = function () {
          }
         
     id=data.id;
+    console.log(id);
+
     this.crearEncuesta();
-    console.log(data.id)
+    
     firebase.database().ref('/empresas/' + id).once('value').then(function(snapshot) {
         var name = (snapshot.val() && snapshot.val().empresa) || 'Anonymous';
         
