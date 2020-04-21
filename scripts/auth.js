@@ -22,8 +22,7 @@ $("#login").click(function() {
     var password = document.getElementById('inputPassword').value;
     firebase.auth().signInWithEmailAndPassword(email, password)
         .then(function(){
-            uid = firebase.auth().currentUser.uid;
-            window.location.href = "Empresa.html?id="+uid; 
+            window.location.href = "lista-operarios.html"; 
         })
         .catch(function(error) {
             var errorCode = error.code;
@@ -55,7 +54,6 @@ $("#signup").click(function() {
     event.preventDefault();
     username = $("#signUpEmail").val();
     password = $("#passwdSignUp").val();
-
     firebase.auth().createUserWithEmailAndPassword(username, password).catch(function(error) {
         var errorCode = error.code;
         var errorMessage = error.message;
@@ -103,82 +101,9 @@ $("#signup").click(function() {
             });
         }
     });
-    resetForm("signUpForm");
-
     Swal.fire({
         icon: 'success',
         title: 'Empresa registrada, ya puede ingresar',
-    });
-});
-
-//No funciona correctamente
-$("#signUpEmployee").click(function () { 
-    const ref = firebase.storage().ref();
-    event.preventDefault();
-    username = $("#signUpEmployeeEmail").val();
-    password = $("#passwdSignUpEmployee").val();
-    nameEmployee = $("#nameEmployee").val();
-    addressEmployee = $("#addressEmployee").val();
-    firebase.auth().createUserWithEmailAndPassword(username, password).catch(function(error) {
-        var errorCode = error.code;
-        var errorMessage = error.message;
-
-        if (errorCode === 'auth/email-already-in-use') {
-            Swal.fire({
-                icon: 'error',
-                title: 'El correo electrónico ya se encuentra en uso',
-            });
-        } else{
-            console.log(errorCode);
-            console.log(errorMessage);
-        }
-    });
-
-    firebase.auth().signInWithEmailAndPassword(username, password).catch(function(error) {
-        var errorCode = error.code;
-        var errorMessage = error.message;
-    });
-
-    file = document.querySelector('#fotoEmployee').files[0];
-    photo_name = null;
-
-    firebase.auth().onAuthStateChanged(function(user) {
-        if (user) {
-            uid = firebase.auth().currentUser.uid;
-            if (uid != localStorage.eid) {
-                if(file!=undefined){
-                    if(myRegex.test(file.type)){
-                        photo_name = uid;
-                        const metadata = { contentType: file.type };
-                        
-                        const task = ref.child(uid).put(file, metadata);
-                        task
-                            .then(snapshot => snapshot.ref.getDownloadURL())
-                            .catch(console.error);
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'El archivo debe ser una imagen',
-                        });            
-                    }
-                }
-                firebase.database().ref("empleados/" + uid).set({
-                    "nombre": nameEmployee,
-                    "direccion": addressEmployee,
-                    "foto": photo_name,
-                    "empresa": localStorage.eid,
-                    "habilitado": 1
-                });
-                firebase.database().ref(`empresas/${localStorage.eid}/empleados/${uid}`).update({
-                    "email": username
-                });                
-            }
-        }
-    });
-    resetForm("signUpEmployeeForm");
-    Swal.fire({
-        icon: 'success',
-        title: 'Empleado registrado, ya puede ingresar',
     });
 });
 
@@ -196,49 +121,32 @@ function logout(){
     }
 }
 
-function resetForm(name) {
-    var frm = document.getElementsByName(name)[0];
-    frm.reset();  // Reset
-    frm.modal('dispose');
-    return false; // Prevent page refresh
- }
-
-async function sendPasswordReset() {
-    const { value: email } = await Swal.fire({
-        title: 'Ingresa el correo electrónico',
-        input: 'email',
-        inputPlaceholder: 'ejemplo@correo.com',
-        showCloseButton: true
-    }) 
-    if (email) {
-        // [START sendpasswordemail]
-        firebase.auth().sendPasswordResetEmail(email).then(function() {
-            // Password Reset Email Sent!
-            // [START_EXCLUDE]
-            Swal.fire({
-                icon: 'success',
-                title: 'El correo electrónico de restablecimiento de contraseña fue enviado. Por favor, verificar.',
-            });  
-        // [END_EXCLUDE]
-        }).catch(function(error) {
-            // Handle Errors here.
-            var errorCode = error.code;
-            var errorMessage = error.message;
-            // [START_EXCLUDE]
-            if (errorCode == 'auth/user-not-found') {
-                errorMessage = 'Usuario no existe.';
-            }
-            Swal.fire({
-                icon: 'error',
-                title: errorMessage,
-            }); 
-            // [END_EXCLUDE]
-        });
-        // [END sendpasswordemail];        
-    } else {
+function sendPasswordReset() {
+    var email = document.getElementById('inputEmail').value;
+    // [START sendpasswordemail]
+    firebase.auth().sendPasswordResetEmail(email).then(function() {
+        // Password Reset Email Sent!
+        // [START_EXCLUDE]
+        Swal.fire({
+            icon: 'success',
+            title: 'El correo electrónico de restablecimiento de contraseña fue enviado. Por favor, verificar.',
+        });  
+      // [END_EXCLUDE]
+    }).catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        // [START_EXCLUDE]
+        if (errorCode == 'auth/invalid-email') {
+            errorMessage = 'El email ingresado no corresponde con un formato válido.';
+        } else if (errorCode == 'auth/user-not-found') {
+            errorMessage = 'Usuario no existe.';
+        }
         Swal.fire({
             icon: 'error',
-            title: 'El correo electrónico ingresado no corresponde con un formato válido.',
-        });          
-    }
+            title: errorMessage,
+        }); 
+        // [END_EXCLUDE]
+    });
+    // [END sendpasswordemail];
 }

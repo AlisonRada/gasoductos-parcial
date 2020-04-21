@@ -32,9 +32,72 @@
 	<main>
 		<div class="container">
 			<div class="text-info">
-				<h3>Lista de operarios</h3>
-				
+				<a  class="btn text-white bg-primary" onclick= "cargarLista()" >Listar operarios</a> 
+				<a class="btn btn-primary" data-toggle="collapse" href="#crearEncuesta" role="button" aria-expanded="false" aria-controls="collapseExample">
+					Crear encuesta
+				  </a>
+			</div>
+			
+			<div class="collapse" id="crearEncuesta">
+				<!-- <div class="card card-body">
+					<form>
+						<div class="form-group">
+							<label for="inputAddress" >Enunciado #1</label>
+							<input type="text" class="form-control" id="enun1" placeholder="¿Le gusta la cañandoga?">
+						  </div>
+						<div class="form-row">
+						  <div class="form-group col-md-3">
+							<input type="text" class="form-control" id="op1P1" placeholder="opción 1">
+						  </div>
+						  <div class="form-group col-md-3">
+							<input type="text" class="form-control" id="op2P1" placeholder="opción 2">
+						  </div>
+						  <div class="form-group col-md-3">
+							<input type="text" class="form-control" id="op3P1" placeholder="opción 3">
+						  </div>
+						  <div class="form-group col-md-3">
+							<input type="text" class="form-control" id="op4P1" placeholder="opción 3">
+						  </div>
+						</div>
+						<div class="row">
+							<div class="col-md-3">
+							  <label class="mr-sm-2" for="inlineFormCustomSelect">Respuesta correcta</label>
+							  <select class="custom-select mr-sm-2" id="correcta1">
+							   <option value="1">Opción 1</option>
+								<option value="2">Opción 2</option>
+								<option value="3">Opción 3</option>
+								<option value="4">Opción 4</option>
+							  </select>
+							</div>
+						  
+						  <div class="col-md-3">
+							<label class="mr-sm-2" for="inlineFormCustomSelect">Valor de la pregunta</label>
+							<select class="custom-select mr-sm-2" id="valor1">
+							 <option value="1">1</option>
+							  <option value="2">2</option>
+							  <option value="3">3</option>
+							</select>
+						  </div>
+						</div>
+						
+						
+						<button type="submit" class="btn btn-primary">Sign in</button>
+					  </form>
+				</div> -->
+			  </div>
+			  <div id="lista_operarios"></div>
+			</div>
+		</main>
+		
+			
+			
+		 
+		 
 
+
+
+
+<!-- Perfil -->
 <div class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
@@ -59,34 +122,40 @@
     </div>
   </div>
 </div>
-			</div>
-			<div class="row">
-				<div class="col-lg-12">
-					<div class="main-box clearfix">
-						<div class="table-responsive">
-							<table  class="table user-list table-hover">
-								<thead>
-									<tr>
-										<th><span>Persona</span></th>
-										<th><span>Direccion</span></th>
-										<th><span>Contraseña</span></th>
-										<th class="text-center"><span>Estado</span></th>
-										<th><span>Eliminar</span></th>
-										<th><span>Editar</span></th>
-										<th>&nbsp;</th>
-									</tr>
-								</thead>
-								<tbody id="tabla">
-									
-								</tbody>
-							</table>
-						</div>
-						
-					</div>
-				</div>
-			</div>
-		</div>
-	</main>
+		
+	
+	<!-- Modal for Edit button -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Editar usuario</h4>
+            </div>
+            <form method="post" >
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="heading">Nombre</label>
+                        <input class="form-control business_skill_name" name="name" id="edit_nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="heading">Dirección</label>
+                        <input class="form-control business_skill_name" name="name" id="edit_direccion" required>
+                    </div>
+                    <div class="form-group">
+						<label for="heading">Contraseña</label>
+                        <input class="form-control business_skill_name"  name="name" id="edit_contraseña" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <a id="guardar_cambios"></a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- End of Modal for Edit button -->
 	<!-- Footer -->
 	<footer class="page-footer dark">
 		<div class="footer-copyright">
@@ -111,10 +180,7 @@
    https://firebase.google.com/docs/web/setup#available-libraries -->
   <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-analytics.js"></script>
   
-  <script src="scripts/auth.js"></script>
-  <script>
-	init_firebase();
-</script>
+ 
 <script src="scripts/empresa.js"></script>
 </body>
 </html>
