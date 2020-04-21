@@ -8,6 +8,8 @@
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.css">
 	<link rel="stylesheet" href="assets/css/list-style.css">
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+	<script type="module" src="scripts/auth.js"></script>
 	<title>Operadores</title>
 </head>
 <body>
@@ -53,6 +55,19 @@
 								<div class="form-group">
 									<label for="nameEmployee">Nombre</label>
 									<input type="text" class="form-control" id="nameEmployee" name="nameEmployee" aria-describedby="Name" required>
+								</div>
+								<div class="form-group">
+                                    <label for="tipoEmployee">Tipo de identificación</label>
+                                    <select id="tipoEmployee" name="tipo">
+                                    <option value="RC">Registro Civil</option>
+                                    <option value="TI">Tarjeta de identidad</option>
+                                    <option value="CC">Cédula de ciudadanía</option>
+                                    <option value="CE">Cedula de extranjería</option>
+                                    <option value="PA">Pasaporte</option>
+                                </div>
+								<div class="form-group">
+									<label for="nameEmployee">Documento de identidad</label>
+									<input type="text" class="form-control" id="idEmployee" name="idEmployee" aria-describedby="Name" required>
 								</div>
 								<div class="form-group">
 									<label for="signUpEmployeeEmail">Correo electrónico <address></address></label>
