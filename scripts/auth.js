@@ -126,11 +126,71 @@ $("#signup").click(function() {
 $("#signUpEmployee").click(function () { 
 	const ref = secondaryApp.storage().ref();
 	event.preventDefault();
+	//Atributos del empleado
 	username = $("#signUpEmployeeEmail").val();
 	password = $("#passwdSignUpEmployee").val();
 	nameEmployee = $("#nameEmployee").val();
-	//addressEmployee =
-	secondaryApp.auth().createUserWithEmailAndPassword(username, password).catch(function(error) {
+	addressEmployee = $("#addressEmployee").val();
+	nid = $("#idEmployee").val();
+	file = document.querySelector('#fotoEmployee').files[0];
+	photo_name = null;
+
+	secondaryApp.auth().createUserWithEmailAndPassword(username, password)
+	.then(function(user) {
+		console.log('Dentro del then');
+		
+		secondaryApp.auth().signInWithEmailAndPassword(username, password).then(function(user){
+	
+			secondaryApp.auth().onAuthStateChanged(function(user) {
+				if (user) {
+					uid = secondaryApp.auth().currentUser.uid;
+					if(file!=undefined){
+						if(myRegex.test(file.type)){
+							photo_name = uid;
+							const metadata = { contentType: file.type };
+							const task = ref.child(uid).put(file, metadata);
+							task
+								.then(snapshot => snapshot.ref.getDownloadURL())
+								.catch(console.error);
+						} else {
+							Swal.fire({
+								icon: 'error',
+								title: 'El archivo debe ser una imagen',
+							});            
+						}
+					}
+					secondaryApp.database().ref("empleados/" + uid).set({
+						"nombre": nameEmployee,
+						"direccion": addressEmployee,
+						"foto": photo_name,
+						"empresa": localStorage.eid,
+						"habilitado": 1,
+						"tipo_id": $("#tipoEmployee").val(),
+						"id": nid
+					});
+					secondaryApp.database().ref(`empresas/${localStorage.eid}/empleados/${uid}`).update({
+						"email": username
+					});                
+				}
+			});
+			
+			resetForm("signUpEmployeeForm");
+			Swal.fire({
+				icon: 'success',
+				title: 'Empleado registrado, ya puede ingresar',
+			});
+		}).catch(function(error) {
+			var errorCode = error.code;
+			var errorMessage = error.message;
+		});
+		
+		secondaryApp.auth().signOut().then(function() {
+			console.log("Salió");
+		}).catch(function(error) {
+			console.log("No salió");
+		});;
+	
+	}).catch(function(error) {
 		var errorCode = error.code;
 		var errorMessage = error.message;
 
@@ -145,56 +205,6 @@ $("#signUpEmployee").click(function () {
 		}
 	});
 
-	secondaryApp.auth().signInWithEmailAndPassword(username, password).catch(function(error) {
-		var errorCode = error.code;
-		var errorMessage = error.message;
-	});
-
-	file = document.querySelector('#fotoEmployee').files[0];
-	photo_name = null;
-
-	secondaryApp.auth().onAuthStateChanged(function(user) {
-		if (user) {
-			uid = secondaryApp.auth().currentUser.uid;
-			if(file!=undefined){
-				if(myRegex.test(file.type)){
-					photo_name = uid;
-					const metadata = { contentType: file.type };
-					const task = ref.child(uid).put(file, metadata);
-					task
-						.then(snapshot => snapshot.ref.getDownloadURL())
-						.catch(console.error);
-				} else {
-					Swal.fire({
-						icon: 'error',
-						title: 'El archivo debe ser una imagen',
-					});            
-				}
-			}
-			secondaryApp.database().ref("empleados/" + uid).set({
-				"nombre": nameEmployee,
-				"direccion": $("#addressEmployee").val(),
-				"foto": photo_name,
-				"empresa": localStorage.eid,
-				"habilitado": 1,
-				"tipo_id": $("#tipoEmployee").val(),
-				"id": $("#idEmployee").val()
-			});
-			secondaryApp.database().ref(`empresas/${localStorage.eid}/empleados/${uid}`).update({
-				"email": username
-			});                
-		}
-	});
-	resetForm("signUpEmployeeForm");
-	Swal.fire({
-		icon: 'success',
-		title: 'Empleado registrado, ya puede ingresar',
-	});
-	secondaryApp.auth().signOut().then(function() {
-		console.log("Salió");
-	}).catch(function(error) {
-		console.log("No salió");
-	});;
 });
 
 function resetForm(name) {
