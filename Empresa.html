@@ -18,29 +18,25 @@
 		<nav class="navbar navbar-light navbar-expand-lg fixed-top bg-white clean-navbar">
 			<div class="container">
 				<a class="navbar-brand logo" href="#"> <img src="assets/img/natural gas.svg" width="50" height="50"> Gasoductos</a>
-				<button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
-				<div class="collapse navbar-collapse"
-					id="navcol-1">
-					<ul class="nav navbar-nav ml-auto"></ul>
-				</div>
 				<ul class="nav navbar-nav ml-auto">
-					<li class="nav-item"><a  class="float-right" id="registro" data-toggle="modal" data-target="#signUpEmployeeModal">Agregar empleado</a>
-					<li class="nav-item" ><span class="glyphicon glyphicon-user"></span><span id="empresa" data-toggle="modal" data-target=".bd-example-modal-sm">Large modal</span></li>
-					
-					<li class="nav-item"><a href="index.html"><span class="glyphicon glyphicon-log-in"></span> Log out</a></li>
+					<li class="nav-item" ><span class="glyphicon glyphicon-user"></span><span id="empresa" data-toggle="modal" data-target=".bd-example-modal-sm">Empresa</span></li>
 				</ul>
+				<div class="dropdown">
+					<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						Acciones
+					</button>
+					<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+						<a class="dropdown-item"id="registro" data-toggle="modal" data-target="#signUpEmployeeModal">Agregar empleado</a>
+						<a class="dropdown-item" data-toggle="modal" data-target="#crearEncuestaModal">Crear encuesta</a>
+						<a class="dropdown-item" href="index.html" id="logout">Cerrar sesión</a>
+					</div>
+				</div>
 			</div>
 		</nav>
 
 	</header>
 	<main>
 		<div class="container">
-			<div class="text-info">
-				<a  class="btn text-white bg-primary" onclick= "cargarLista()" >Listar operarios</a> 
-				<a class="btn btn-primary" data-toggle="collapse" href="#crearEncuesta" role="button" aria-expanded="false" aria-controls="collapseExample">
-					Crear encuesta
-				  </a>
-			</div>
 			<div class="modal fade" id="signUpEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="signUpEmployeeModalLabel" aria-hidden="true">
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
@@ -67,7 +63,7 @@
                                 </div>
 								<div class="form-group">
 									<label for="nameEmployee">Documento de identidad</label>
-									<input type="text" class="form-control" id="idEmployee" name="idEmployee" aria-describedby="Name" required>
+									<input type="text" class="form-control" oninput="this.value=this.value.replace(/(?![0-9]|\.)./gmi,'')" id="idEmployee" name="idEmployee" aria-describedby="Name" required>
 								</div>
 								<div class="form-group">
 									<label for="signUpEmployeeEmail">Correo electrónico <address></address></label>
@@ -93,12 +89,33 @@
 						</div>
 					</div>
 				</div>
-			</div>
+			</div> <!--Modal creacion de empleado-->
+
+			<div class="modal fade" id="crearEncuestaModal" tabindex="-1" role="dialog" aria-labelledby="crearEncuestaModalLabel" aria-hidden="true">
+				<div class="modal-dialog modal-xl" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">Crear nueva encuesta</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					  </button>
+						</div>
+						<div class="modal-body">
+							<form id="formEncuesta">
+
+							</form>
+						</div>
+						<div class="modal-footer">
+							<button class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+							<button type="submit" onClick="subirEncuesta()" class="btn btn-primary">Crear</button>
+						</div>
+					</div>
+				</div>
+			</div> <!--Modal creacion de empleado-->
 			
-			<div class="collapse" id="crearEncuesta">
-				
-			  </div>
-			  <div id="lista_operarios"></div>
+			<div id="lista_operarios">
+
+			</div>
 			</div>
 		</main>
 		

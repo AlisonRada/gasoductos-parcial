@@ -28,7 +28,7 @@ $("#login").click(function() {
 					uid = firebase.auth().currentUser.uid;
 					localStorage.eid = uid;
 					localStorage.uid = null;
-					window.location.href = "empresa.html?id="+uid;
+					window.location.href = "empresa.html";
                 } else{
 					window.location.href = "lista-encuestas.html";
 					localStorage.uid = uid;
@@ -122,6 +122,13 @@ $("#signup").click(function() {
 	
 	logout();
 });
+
+function ValidateEmail(email){
+	if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)){
+    return true
+	}
+	return false
+}
 
 $("#signUpEmployee").click(function () { 
 	const ref = secondaryApp.storage().ref();
@@ -223,10 +230,12 @@ $("#passwdReset").click(function(){
 });
 
 function logout(){
+	localStorage.eid = null;
+	localStorage.uid = null;
 	firebase.auth().signOut().then(function() {
-		console.log("Salió");
+		console.log("Cierro sesion");
 	}).catch(function(error) {
-	console.log("No salió");
+	console.log("No cierro sesion");
 	});;
 }
 
