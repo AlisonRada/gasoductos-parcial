@@ -7,10 +7,16 @@ window.onload = function () {
 	//id del cuestionario
 	cid = parseInt(params = document.location.href.split('=')[1]);
 	//id de la empresa
-	id = localStorage.eid;
-	this.cargarCuestionario();
+	firebase.database().ref('/empleados/' +uid+"/encuestas/"+cid).once('value').then(function(snapshot){
+		if (snapshot.val().completado) {
+			console.log('Ya la realizó')
+			window.location.href = "lista-encuestas.html";
+		} else{
+			id = localStorage.eid;
+			this.cargarCuestionario();
+		}
+	});
 }
-
 
 function cargarCuestionario(){
 	puntaje_max = 0;

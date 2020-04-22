@@ -2,34 +2,32 @@
 id = this.localStorage.eid
 const $bell = document.getElementById('notification');
 const count = Number($bell.getAttribute('data-count')) || 0;
+fotoEmpleado = ""
 
 window.onload = function () {
-    
-    const $bell = document.getElementById('notification');
+	const $bell = document.getElementById('notification');
+	$bell.addEventListener("animationend", function(event){
+	$bell.classList.remove('notify');
+	});
 
-
-
-$bell.addEventListener("animationend", function(event){
-  $bell.classList.remove('notify');
-});
-
-
-    
-
-
-
-
-	
-	console.log(id);
 	this.cargarLista()
-	this.crearEncuesta();
-   
+	this.crearEncuesta(); 
 	firebase.database().ref('/empresas/' + id).once('value').then(function(snapshot) {
 		var name = (snapshot.val() && snapshot.val().empresa) || 'Anonymous';
+		fotoEmpresa = snapshot.val().foto || 'default.jpg';
+		storage = firebase.storage();
+		storageRef = storage.ref();
+		tangRef = storageRef.child(fotoEmpresa);
+		tangRef.getDownloadURL().then(function(url) {
+			// Once we have the download URL, we set it to our img element
+			document.getElementById('fotoPerfil').src = url;
+		}).catch(function(error) {
+			// If anything goes wrong while getting the download URL, log the error
+			console.error(error);
+		});
 		
 		
 		var responsable= "Representante: "+snapshot.val().representante;
-		console.log(responsable)
 		document.getElementById('empresa').innerHTML =name;
 		document.getElementById('Nombre_Empresa').innerHTML =name;
 		document.getElementById('representante').innerHTML =responsable;
@@ -37,52 +35,47 @@ $bell.addEventListener("animationend", function(event){
 }
 
 function aumentarNotis(){
-    
-  
-    $bell.setAttribute('data-count', count + 1);
-    $bell.classList.add('show-count');
-    $bell.classList.add('notify');
+	$bell.setAttribute('data-count', count + 1);
+	$bell.classList.add('show-count');
+	$bell.classList.add('notify');
 }
-console.log('empresas/'+id+'/historial')
+
 firebase.database().ref('empresas/'+id+'/historial').on('child_added',function(snapshot){
 
-    empleado=snapshot.val().Empleado;
-    idempleado=empleado+"";
+	empleado=snapshot.val().Empleado;
+	idempleado=empleado+"";
 
-    
-    cuestionario= snapshot.val().cuestionario;
-    firebase.database().ref('/empleados/'+empleado).once('value').then(function(snapshot2){
-        nombre=snapshot2.val().nombre;
-        resultado=snapshot2.val().encuestas[cuestionario].puntaje;
-     
-        document.getElementById('historial_body').innerHTML+= `
-        <tr>
-                      <th scope="row">${nombre}</th>
-                      <td>P${cuestionario}</td>
-                      <td>${resultado}</td>
-                      <td style="width: 15%;" class="text-center">
-                        <a onClick="verResultados('${idempleado}')" class="btn text-white bg-primary">Ver</a>
-                      </td> 
-                    </tr>
-                    `
-
-
-    });
+	
+	cuestionario= snapshot.val().cuestionario;
+	firebase.database().ref('/empleados/'+empleado).once('value').then(function(snapshot2){
+		nombre=snapshot2.val().nombre;
+		resultado=snapshot2.val().encuestas[cuestionario].puntaje;
+	 
+		document.getElementById('historial_body').innerHTML+= `
+		<tr>
+					  <th scope="row">${nombre}</th>
+					  <td>P${cuestionario}</td>
+					  <td>${resultado}</td>
+					  <td style="width: 15%;" class="text-center">
+						<a onClick="verResultados('${idempleado}')" class="btn text-white bg-primary">Ver</a>
+					  </td> 
+					</tr>
+					`
 
 
+	});
 
-    console.log(snapshot.val());
-    this.aumentarNotis();
-    Push.create("Se contestó una encuesta", {
-        body: "la contestó el vale yatusabes'?",
-        icon: '/assets/img/natural gas.svg',
-        timeout: 4000,
-        onClick: function () {
-            window.focus();
-            this.close();
-        }
-    });
-    
+	this.aumentarNotis();
+	Push.create("Cuestionario realizada", {
+		body: "Uno de sus empleados ha realizado una encuesta'?",
+		icon: '/assets/img/natural gas.svg',
+		timeout: 4000,
+		onClick: function () {
+			window.focus();
+			this.close();
+		}
+	});
+	
 
 
 
@@ -90,15 +83,16 @@ firebase.database().ref('empresas/'+id+'/historial').on('child_added',function(s
 
 
 function limpiarHistorial(){
-    firebase.database().ref("/empresas/"+id+"/historial").remove();
-    $bell.setAttribute('data-count', 0);
-    document.getElementById('historial_body').innerHTML="";
+	firebase.database().ref("/empresas/"+id+"/historial").remove();
+	$bell.setAttribute('data-count', 0);
+	document.getElementById('historial_body').innerHTML="";
 
 
 }
 
 
 function cargarLista(){
+	var cont = 1;
 	encabezado=document.getElementById("lista_operarios");
 				encabezado.innerHTML=	`
 				<h3>Lista de operarios</h3>
@@ -132,26 +126,25 @@ function cargarLista(){
 		cant_empleados=0;
 		document.getElementById('tabla').innerHTML ="";  
 		for(var k in datos) {
-			escribirUsuario(k);
-			cant_empleados++;        
+			cant_empleados++;
+			escribirUsuario(k, cant_empleados);
 		 }
 		 document.getElementById('cant_empleados').innerHTML ="Cantidad de empleados: "+cant_empleados;
 	 });
 }
-function escribirUsuario(id){
+function escribirUsuario(id, cont){
 	firebase.database().ref('/empleados/'+id).once('value').then(function(snapshot){
 		empleado=snapshot.val();
-		console.log(empleado);
+
 		if (empleado.habilitado==1) {
 			var estado='<span class="text-white bg-success">Habilitado</span>';
-			} else {
+		} else {
 			var estado= '<span class="text-white bg-secondary">No Habilitado</span>' ; 
-			}
-			
+		}
 		tabla.innerHTML+=   `
 		<tr>
 										<td>
-											<img src="../assets/img/gallina.png" alt="">
+											<img id='empleado${cont}' alt="">
 											${empleado.nombre}
 											
 										</td>
@@ -176,6 +169,15 @@ function escribirUsuario(id){
 										</td> 
 									</tr>
 	  `;
+
+		fotoEmpleado = empleado.foto || 'default.jpg'
+		var tangRef = storageRef.child(fotoEmpleado);
+		tangRef.getDownloadURL().then(function(url) {
+				// Once we have the download URL, we set it to our img element
+				document.getElementById('empleado'+cont).src = url;
+			}).catch(function(error) {
+				console.error(error);
+		});
 
 	});
 }
@@ -236,6 +238,7 @@ function crearEncuesta(){
 		`
 	}	
 }
+
 function subirEncuesta(){
 	firebase.database().ref('/empresas/' + id+"/encuestas").once('value').then(function(snapshot) {
 		console.log('Estoy aquí')
@@ -272,8 +275,8 @@ function subirEncuesta(){
 }
 
 function verResultados(id){
-    window.location.href = "lista-encuestas-jefe.html";
-    localStorage.uid = id;
+	window.location.href = "lista-encuestas-jefe.html";
+	localStorage.uid = id;
 }
 
 
@@ -290,7 +293,6 @@ function asignarAEmpleados(id){
 }
 
 function estado(identificador,estado){
-   
 	var updates = {};
 	if (estado==1) {
 		updates["empleados/" + identificador+"/habilitado"] = 0;
@@ -300,8 +302,8 @@ function estado(identificador,estado){
 		firebase.database().ref().update(updates);
 	}
 	cargarLista();
-	
 }
+
 function _editar(identificador,nombre,contraseña,direccion){
 	console.log(contraseña);
 	document.getElementById('edit_nombre').value=nombre;
@@ -309,18 +311,18 @@ function _editar(identificador,nombre,contraseña,direccion){
 	document.getElementById('edit_contraseña').value=contraseña;
 	document.getElementById('guardar_cambios').innerHTML=`<button type='button' data-dismiss="modal" class='btn btn-primary' onClick="_guardar('${identificador}')">Save changes</button>`
 }
+
 function _guardar(identificador){
 	var updates = {};
 	updates["/empleados/"+identificador+"/nombre"]=document.getElementById('edit_nombre').value.toString();
-	
 	updates["/empleados/"+identificador+"/direccion"]=document.getElementById('edit_direccion').value.toString();
-   
 	updates["/empleados/"+identificador+"/contraseña"]=document.getElementById('edit_contraseña').value.toString();
 	firebase.database().ref().update(updates);
 	cargarLista();
-
 }
+
 function _eliminar(identificador) {
 	firebase.database().ref("/empleados/"+identificador).remove();
+	firebase.database().ref("/empresas/"+id+"/empleados/"+identificador).remove();
 	cargarLista();
 }

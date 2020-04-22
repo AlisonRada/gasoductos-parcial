@@ -240,7 +240,7 @@ function logout(){
 	localStorage.eid = null;
 	localStorage.uid = null;
 	firebase.auth().signOut().then(function() {
-		console.log("Cierro sesion");
+		//console.log("Cierro sesion");
 	}).catch(function(error) {
 	console.log("No cierro sesion");
 	});;

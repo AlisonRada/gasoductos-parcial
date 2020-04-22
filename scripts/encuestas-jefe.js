@@ -7,6 +7,26 @@ window.onload = function () {
 
 function cargarLista(){
 	firebase.database().ref('/empresas/' + id).once('value').then(function(snapshot){
+
+		fotoEmpresa = snapshot.val().foto || 'default.jpg';
+		storage = firebase.storage();
+		storageRef = storage.ref();
+		tangRef = storageRef.child(fotoEmpresa);
+
+		var responsable= "Representante: "+snapshot.val().representante;
+		document.getElementById('hiUser').innerHTML = name;
+		document.getElementById('Nombre_Empresa').innerHTML = snapshot.val().empresa || 'Empresa';
+		document.getElementById('cant_encuestas').innerHTML = "Cantidad de encuestas: "+snapshot.val().encuestas.cantidad;
+		document.getElementById('representante').innerHTML =responsable;
+
+		tangRef.getDownloadURL().then(function(url) {
+			// Once we have the download URL, we set it to our img element
+			document.getElementById('fotoPerfil').src = url;
+		}).catch(function(error) {
+			// If anything goes wrong while getting the download URL, log the error
+			console.error(error);
+		});
+
 		empresa = snapshot.val().empresa;
 		document.getElementById("hiUser").innerHTML = empresa;
 		datos=snapshot.val().encuestas;

@@ -8,6 +8,22 @@ window.onload = function () {
 		registro = snapshot.val();
 		var name = registro['nombre'];
 		document.getElementById('hiUser').innerHTML = "Hola, "+name;
+		document.getElementById('nombre_employee').innerHTML = registro.nombre;
+		document.getElementById('dir_employee').innerHTML = "Dirección: "+registro.direccion;;
+		
+
+		fotoEmpleado = snapshot.val().foto || 'default.jpg';
+		storage = firebase.storage();
+		storageRef = storage.ref();
+		tangRef = storageRef.child(fotoEmpleado);
+		tangRef.getDownloadURL().then(function(url) {
+			// Once we have the download URL, we set it to our img element
+			document.getElementById('fotoPerfil').src = url;
+		}).catch(function(error) {
+			// If anything goes wrong while getting the download URL, log the error
+			console.error(error);
+		});
+		
 		id = registro['empresa'];
 		cargarLista();
 	});
