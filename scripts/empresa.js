@@ -1,7 +1,7 @@
 
 id = this.localStorage.eid
 const $bell = document.getElementById('notification');
-const count = Number($bell.getAttribute('data-count')) || 0;
+
 fotoEmpleado = ""
 
 window.onload = function () {
@@ -35,9 +35,12 @@ window.onload = function () {
 }
 
 function aumentarNotis(){
+    const count = Number($bell.getAttribute('data-count')) || 0;
+    console.log(count)
 	$bell.setAttribute('data-count', count + 1);
 	$bell.classList.add('show-count');
-	$bell.classList.add('notify');
+    $bell.classList.add('notify');
+    
 }
 
 firebase.database().ref('empresas/'+id+'/historial').on('child_added',function(snapshot){

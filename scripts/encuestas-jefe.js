@@ -10,7 +10,7 @@ window.onload = function () {
 
 }
 
-firebase.database().ref('empresas/'+id+'/historial').on('child_added',function(snapshot){
+/* firebase.database().ref('empresas/'+id+'/historial').on('child_added',function(snapshot){
 
 	empleado=snapshot.val().Empleado;
 	idempleado=empleado+"";
@@ -49,7 +49,7 @@ firebase.database().ref('empresas/'+id+'/historial').on('child_added',function(s
 
 
 
-});
+}); */
 
 function cargarLista(){
 	firebase.database().ref('/empresas/' + id).once('value').then(function(snapshot){
