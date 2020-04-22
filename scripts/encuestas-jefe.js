@@ -1,9 +1,55 @@
+
 window.onload = function () {
+	const $bell = document.getElementById('notification');
+	$bell.addEventListener("animationend", function(event){
+	$bell.classList.remove('notify');
+	});
 	uid = localStorage.uid;
-	id = localStorage.eid;
+	//id = localStorage.eid;
 	this.cargarLista();
 
 }
+
+firebase.database().ref('empresas/'+id+'/historial').on('child_added',function(snapshot){
+
+	empleado=snapshot.val().Empleado;
+	idempleado=empleado+"";
+
+	
+	cuestionario= snapshot.val().cuestionario;
+	firebase.database().ref('/empleados/'+empleado).once('value').then(function(snapshot2){
+		nombre=snapshot2.val().nombre;
+		resultado=snapshot2.val().encuestas[cuestionario].puntaje;
+	 
+		document.getElementById('historial_body').innerHTML+= `
+		<tr>
+					  <th scope="row">${nombre}</th>
+					  <td>P${cuestionario}</td>
+					  <td>${resultado}</td>
+					  <td style="width: 15%;" class="text-center">
+						<a onClick="verResultados('${idempleado}')" class="btn text-white bg-primary">Ver</a>
+					  </td> 
+					</tr>
+					`
+
+
+	});
+
+	this.aumentarNotis();
+	Push.create("Cuestionario realizada", {
+		body: "Uno de sus empleados ha realizado una encuesta'?",
+		icon: '/assets/img/natural gas.svg',
+		timeout: 4000,
+		onClick: function () {
+			window.focus();
+			this.close();
+		}
+	});
+	
+
+
+
+});
 
 function cargarLista(){
 	firebase.database().ref('/empresas/' + id).once('value').then(function(snapshot){

@@ -7,7 +7,9 @@
 	<link href="https://fonts.googleapis.com/css?family=Oswald:300,700|Varela+Round" rel="stylesheet">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link rel="stylesheet" href="assets/css/list-style.css">
+	<script src="scripts/push.js"></script>
 	<title>Operario</title>
 </head>
 <body>
@@ -23,6 +25,7 @@
 				</div>
 				<ul class="nav navbar-nav ml-auto">
 					<li class="nav-item"><span class="glyphicon glyphicon-user"></span> <span id="hiUser" data-toggle="modal" data-target=".bd-example-modal-sm"> Hola, @username</span></li>
+					<li> <span data-toggle="modal" data-target="#historial_modal"><div id="notification" class="notification" ></div></span></li>
 					<li class="nav-item"><a href="index.html"><span class="glyphicon glyphicon-log-in"></span> Log out</a></li>
 				</ul>
 			</div>
@@ -81,6 +84,44 @@
 			</div> <!--div container-->
 		</div>
 	</main>
+	<div class="modal fade" id="historial_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <!--Header-->
+      <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">Historial</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <!--Body-->
+      <div class="modal-body">
+
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Empleado</th>
+              <th>Cuestionario</th>
+			  <th>Resultado</th>
+			  <th>ver</th>
+            </tr>
+          </thead>
+          <tbody id="historial_body" >
+        
+          
+          </tbody>
+        </table>
+
+      </div>
+      <!--Footer-->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-primary" data-dismiss="modal" >Cerrar</button>
+        <button onClick='limpiarHistorial()' class="btn btn-primary">Limpiar</button>
+      </div>
+    </div>
+  </div>
+</div>
 	<!-- Footer -->
 	<footer class="page-footer dark">
 		<div class="footer-copyright">
@@ -110,7 +151,7 @@
 	<script>
 		init_firebase();
 	</script>
-	
+	<script src="scripts/empresa.js"></script>
 	<script src="scripts/encuestas-jefe.js"></script>
   
 </body>
