@@ -9,6 +9,7 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link rel="stylesheet" href="assets/css/list-style.css">
+	<script src="scripts/push.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 	<script type="module" src="scripts/auth.js"></script>
 	<title>Operadores</title>
@@ -21,7 +22,7 @@
 				<a class="navbar-brand logo" href="#"> <img src="assets/img/natural gas.svg" width="50" height="50"> Gasoductos</a>
 				<ul class="nav navbar-nav ml-auto">
 					<li class="nav-item" ><span class="glyphicon glyphicon-user"></span><span id="empresa" data-toggle="modal" data-target=".bd-example-modal-sm">Empresa</span></li>
-					<li> <div id="notification" class="notification"></div></li>
+					<li> <span data-toggle="modal" data-target="#historial_modal"><div id="notification" class="notification" ></div></span></li>
 				</ul>
 				
 				<div class="dropdown">
@@ -38,6 +39,7 @@
 		</nav>
 
 	</header>
+	
 	<main>
 		<div class="container">
 			<div class="modal fade" id="signUpEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="signUpEmployeeModalLabel" aria-hidden="true">
@@ -116,6 +118,47 @@
 				</div>
 			</div> <!--Modal creacion de empleado-->
 			
+
+<!-- Modal: modalCart -->
+<div class="modal fade" id="historial_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <!--Header-->
+      <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">Historial</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <!--Body-->
+      <div class="modal-body">
+
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Empleado</th>
+              <th>Cuestionario</th>
+			  <th>Resultado</th>
+			  <th>ver</th>
+            </tr>
+          </thead>
+          <tbody id="historial_body" >
+        
+          
+          </tbody>
+        </table>
+
+      </div>
+      <!--Footer-->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-primary" data-dismiss="modal" >Cerrar</button>
+        <button onClick='limpiarHistorial()' class="btn btn-primary">Limpiar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal: modalCart -->
 			<div id="lista_operarios">
 
 			</div>

@@ -87,7 +87,11 @@ function submitEncuesta() {
 	event.preventDefault();
 	console.log('submit');
 	puntaje = getPuntuacion();
-	console.log("Puntuacion: "+puntaje);	
+	console.log("Puntuacion: "+id);	
+	firebase.database().ref('/empresas/'+id+"/historial/"+cid+uid).set({
+		"cuestionario":cid,
+		"Empleado":uid,
+	});
 	firebase.database().ref('/empleados/' + uid+"/encuestas/"+cid).update({
 		"completado": 1,
 		"puntaje": puntaje

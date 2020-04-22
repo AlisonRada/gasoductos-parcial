@@ -1,6 +1,8 @@
 
 id = this.localStorage.eid
-prueba=0;
+const $bell = document.getElementById('notification');
+const count = Number($bell.getAttribute('data-count')) || 0;
+
 window.onload = function () {
     
     const $bell = document.getElementById('notification');
@@ -35,8 +37,7 @@ $bell.addEventListener("animationend", function(event){
 }
 
 function aumentarNotis(){
-    const $bell = document.getElementById('notification');
-    const count = Number($bell.getAttribute('data-count')) || 0;
+    
   
     $bell.setAttribute('data-count', count + 1);
     $bell.classList.add('show-count');
@@ -44,22 +45,57 @@ function aumentarNotis(){
 }
 console.log('empresas/'+id+'/historial')
 firebase.database().ref('empresas/'+id+'/historial').on('child_added',function(snapshot){
-    console.log("Entro mierma")
-   if(snapshot.val()!=null){
+
+    empleado=snapshot.val().Empleado;
+    idempleado=empleado+"";
+
+    
+    cuestionario= snapshot.val().cuestionario;
+    firebase.database().ref('/empleados/'+empleado).once('value').then(function(snapshot2){
+        nombre=snapshot2.val().nombre;
+        resultado=snapshot2.val().encuestas[cuestionario].puntaje;
+     
+        document.getElementById('historial_body').innerHTML+= `
+        <tr>
+                      <th scope="row">${nombre}</th>
+                      <td>P${cuestionario}</td>
+                      <td>${resultado}</td>
+                      <td style="width: 15%;" class="text-center">
+                        <a onClick="verResultados('${idempleado}')" class="btn text-white bg-primary">Ver</a>
+                      </td> 
+                    </tr>
+                    `
+
+
+    });
+
+
+
+    console.log(snapshot.val());
     this.aumentarNotis();
-   }
+    Push.create("Se contestó una encuesta", {
+        body: "la contestó el vale yatusabes'?",
+        icon: '/assets/img/natural gas.svg',
+        timeout: 4000,
+        onClick: function () {
+            window.focus();
+            this.close();
+        }
+    });
     
 
 
 
 });
-$('#notification').click(function(){
-    console.log("Click");
-    firebase.database().ref("empresas/" + id+"/historial/pruebita"+prueba).set({
-       'asies':"probando"
-    });
-prueba++;
-});
+
+
+function limpiarHistorial(){
+    firebase.database().ref("/empresas/"+id+"/historial").remove();
+    $bell.setAttribute('data-count', 0);
+    document.getElementById('historial_body').innerHTML="";
+
+
+}
 
 
 function cargarLista(){
@@ -101,6 +137,47 @@ function cargarLista(){
 		 }
 		 document.getElementById('cant_empleados').innerHTML ="Cantidad de empleados: "+cant_empleados;
 	 });
+}
+function escribirUsuario(id){
+	firebase.database().ref('/empleados/'+id).once('value').then(function(snapshot){
+		empleado=snapshot.val();
+		console.log(empleado);
+		if (empleado.habilitado==1) {
+			var estado='<span class="text-white bg-success">Habilitado</span>';
+			} else {
+			var estado= '<span class="text-white bg-secondary">No Habilitado</span>' ; 
+			}
+			
+		tabla.innerHTML+=   `
+		<tr>
+										<td>
+											<img src="../assets/img/gallina.png" alt="">
+											${empleado.nombre}
+											
+										</td>
+										<td class="text-center">
+											${empleado.direccion}
+										</td>
+										<td class="text-center">
+											*******
+										</td>
+										<td class="text-center">
+										<span onClick="estado('${id}','${empleado.habilitado}')">${estado}</span>
+										</td>
+										<td class="text-center">
+										<button  class="btn text-white bg-danger" onClick="_eliminar('${id}')">Eliminar</button>
+										 </td>
+										 <td class="text-center">
+										 <a  class="btn text-white bg-warning"  data-toggle="modal" data-target="#myModal" onClick="_editar('${id}','${empleado.nombre}','*****','${empleado.direccion}')">Editar</a>
+										  </td>
+										
+										<td style="width: 15%;" class="text-center">
+											<a onClick="verResultados('${id}')" class="btn text-white bg-primary">Ver resultados</a>
+										</td> 
+									</tr>
+	  `;
+
+	});
 }
 
 function crearEncuesta(){
@@ -194,47 +271,11 @@ function subirEncuesta(){
 	}); 
 }
 
-function escribirUsuario(id){
-	firebase.database().ref('/empleados/'+id).once('value').then(function(snapshot){
-		empleado=snapshot.val();
-		console.log(empleado);
-		if (empleado.habilitado==1) {
-			var estado='<span class="text-white bg-success">Habilitado</span>';
-			} else {
-			var estado= '<span class="text-white bg-secondary">No Habilitado</span>' ; 
-			}
-			
-		tabla.innerHTML+=   `
-		<tr>
-										<td>
-											<img src="../assets/img/gallina.png" alt="">
-											${empleado.nombre}
-											
-										</td>
-										<td class="text-center">
-											${empleado.direccion}
-										</td>
-										<td class="text-center">
-											*******
-										</td>
-										<td class="text-center">
-										<span onClick="estado('${id}','${empleado.habilitado}')">${estado}</span>
-										</td>
-										<td class="text-center">
-										<button  class="btn text-white bg-danger" onClick="_eliminar('${id}')">Eliminar</button>
-										 </td>
-										 <td class="text-center">
-										 <a  class="btn text-white bg-warning"  data-toggle="modal" data-target="#myModal" onClick="_editar('${id}','${empleado.nombre}','*****','${empleado.direccion}')">Editar</a>
-										  </td>
-										
-										<td style="width: 15%;" class="text-center">
-											<a href="evaluacion.html" class="btn text-white bg-primary">Do test</a>
-										</td> 
-									</tr>
-	  `;
-
-	});
+function verResultados(id){
+    window.location.href = "lista-encuestas-jefe.html";
+    localStorage.uid = id;
 }
+
 
 function asignarAEmpleados(id){
 	firebase.database().ref('/empresas/' + id+"/empleados").once('value').then(function(snapshot){
