@@ -1,41 +1,60 @@
-id="bL7rZpf7uxWhxD1iAa8DDMbBFRa2"
-uid="1";
+id = "";
+estado = {};
+
 window.onload = function () {
-
-	firebase.database().ref('/empresas/' + id + '/empleados/'+uid).once('value').then(function(snapshot) {
-		var name = (snapshot.val() && snapshot.val().Nombre) || 'Anonymous';
-		document.getElementById('nombre_employee').innerHTML = name;
+	uid=localStorage.uid;
+	//console.log("id empleado: "+uid);
+	firebase.database().ref('/empleados/'+uid).once('value').then(function(snapshot){
+		registro = snapshot.val();
+		var name = registro['nombre'];
+		document.getElementById('hiUser').innerHTML = "Hola, "+name;
+		id = registro['empresa'];
+		cargarLista();
 	});
-
-	this.cargarLista();
 }
 
 function cargarLista(){
 	firebase.database().ref('/empresas/' + id+"/encuestas/").once('value').then(function(snapshot){
-	   
 		datos=snapshot.val();
-		cant_encuestas=0;
-		document.getElementById('tabla_encuestas').innerHTML ="";  
-		for(var k in datos) {
-			cant_encuestas++;
-			tabla_encuestas.innerHTML+=
-			`
-				<tr>
-					<td>
-						${k}
-					</td>
-					<td>
-						${datos[k].titulo}
-					</td>
-					<td class="text-center">
-						${datos[k].tiempo} minutos
-					</td>
-					<td class="text-center">
-						Sin hacer
-					</td> 
-				</tr>
-			`;
-		 }
-		 document.getElementById('cant_encuestas').innerHTML ="Cantidad de encuestas: "+cant_encuestas;
+		document.getElementById('tabla_encuestas').innerHTML =""; 
+		localStorage.eid = id;
+		//console.log("id empresa cargar lista: "+localStorage.eid);
+		firebase.database().ref('/empleados/'+uid+'/encuestas/').once('value').then(function (imagen) {
+			
+			info = imagen.val();
+			for(var k in datos) {
+				if (k != 'cantidad') {
+					estado = "Sin realizar";
+					if (info[k].completado){
+						puntuacion = info[k].puntaje;
+						id_activo = "resultados.html?puntaje="+puntuacion;
+						estado = "Completado";
+					}else{
+						id_activo = "examen.html?cuestionario="+k;
+						puntuacion = "Por calificar";
+					}
+					tabla_encuestas.innerHTML+=
+					`
+						<tr>
+							<td>
+								<a href=${id_activo}>${k}</a>
+							</td>
+							<td>
+								${datos[k].titulo}
+							</td>
+							<td class="text-center">
+								${datos[k].tiempo} minutos
+							</td>
+							<td class="text-center">
+								${estado}
+							</td>
+							<td class="text-center">
+								${puntuacion}
+							</td>  
+						</tr>
+					`;
+				}
+			 }			
+		})
 	 });
 }

@@ -1,8 +1,13 @@
-id = "bL7rZpf7uxWhxD1iAa8DDMbBFRa2";
-cid = 1;
 puntaje_max = 0;
 
 window.onload = function () {
+	//
+	uid = localStorage.uid;
+	console.log("uid: "+uid);
+	//id del cuestionario
+	cid = parseInt(params = document.location.href.split('=')[1]);
+	//id de la empresa
+	id = localStorage.eid;
 	this.cargarCuestionario();
 }
 
@@ -15,7 +20,6 @@ function cargarCuestionario(){
 		document.getElementById('cuestionario').innerHTML =""; 
 		datos=snapshot.val();
 		document.getElementById('titulo').innerHTML = datos.titulo;
-		console.log(datos['q1'].opciones);
 		
 		for (let question = 1; question < 6; question++) {
 			q = 'q'+question;
@@ -36,7 +40,7 @@ function cargarCuestionario(){
 				valor = 0;
 				if (datos[q].respuesta == op) {
 					valor = datos[q].valor;
-					puntaje_max += valor;
+					puntaje_max += parseInt(valor);
 				}
 				if (opcion === 1) { //default check
 					elem.innerHTML +=
@@ -63,30 +67,43 @@ function cargarCuestionario(){
 				`
 					<div>
 						<!--Submit button-->
-						<button id="submit-encuesta" href="results.html" class="btn mx-2 my-5 text-white bg-primary btn-block btn-lg">Enviar</button>
+						<button onclick="submitEncuesta()" class="btn mx-2 my-5 text-white bg-primary btn-block btn-lg">Enviar</button>
 					</div>
 				`
 			}
 		} //for de afuera
+		console.log('Puntaje máximo: '+puntaje_max);
+		return puntaje_max;
 		
 	});
-	console.log('Puntaje máximo');
-	console.log(puntaje_max);
-	return puntaje_max;
+	
 }
 
-$("#submit-encuesta").click(function() {
-	console.log('No escribeeee');
-	console.log(getPuntuacion());
+$("#logo").click(function name(params) {
+	window.location.href = "lista-encuestas.html";
 });
 
+function submitEncuesta() {
+	event.preventDefault();
+	console.log('submit');
+	puntaje = getPuntuacion();
+	console.log("Puntuacion: "+puntaje);	
+	firebase.database().ref('/empleados/' + uid+"/encuestas/"+cid).update({
+		"completado": 1,
+		"puntaje": puntaje
+	});
+	window.location.href = "resultados.html?puntaje="+puntaje;
+}
+
 function getPuntuacion(){
+	//Inicia con cero puntos
 	calificacion = 0;
 	for (let question = 1; question <= 5; question++) {
 		q = 'q'+question;
+		//Adiciono el valor que obtuve de la pregunta
 		calificacion += getPuntos(q);
 	}
-	return calificacion;
+	return calificacion/puntaje_max*100;
 }
 
 function getPuntos(name) { 

@@ -23,18 +23,25 @@ $("#login").click(function() {
 	var password = document.getElementById('inputPassword').value;
 	firebase.auth().signInWithEmailAndPassword(email, password)
 		.then(function(){
-			firebase.database().ref(`empresas/${firebase.auth().currentUser.uid}`).once("value", snapshot => {
-                if (snapshot.exists()){
+			firebase.database().ref(`empleados/${firebase.auth().currentUser.uid}`).once("value", snapshot => {
+				if (snapshot.exists()){
+					if (snapshot.val().habilitado) {
+						window.location.href = "lista-encuestas.html";
+						localStorage.uid = firebase.auth().currentUser.uid;
+						localStorage.eid = null;						
+					} else{
+						Swal.fire({
+							icon: 'error',
+							title: 'Lo sentimos, no se encuentra habilitado para ingresar.',
+						});						
+					}
+				} else{
 					uid = firebase.auth().currentUser.uid;
 					localStorage.eid = uid;
 					localStorage.uid = null;
 					window.location.href = "empresa.html";
-                } else{
-					window.location.href = "lista-encuestas.html";
-					localStorage.uid = uid;
-					localStorage.eid = null;
-                }
-            }); 
+				}
+			}); 
 		})
 		.catch(function(error) {
 			var errorCode = error.code;
@@ -125,7 +132,7 @@ $("#signup").click(function() {
 
 function ValidateEmail(email){
 	if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)){
-    return true
+	return true
 	}
 	return false
 }
