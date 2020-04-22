@@ -1,7 +1,23 @@
-id="";
-window.onload = function () {
 
-	id = this.localStorage.eid
+id = this.localStorage.eid
+prueba=0;
+window.onload = function () {
+    
+    const $bell = document.getElementById('notification');
+
+
+
+$bell.addEventListener("animationend", function(event){
+  $bell.classList.remove('notify');
+});
+
+
+    
+
+
+
+
+	
 	console.log(id);
 	this.cargarLista()
 	this.crearEncuesta();
@@ -17,6 +33,33 @@ window.onload = function () {
 		document.getElementById('representante').innerHTML =responsable;
 	  });    
 }
+
+function aumentarNotis(){
+    const $bell = document.getElementById('notification');
+    const count = Number($bell.getAttribute('data-count')) || 0;
+  
+    $bell.setAttribute('data-count', count + 1);
+    $bell.classList.add('show-count');
+    $bell.classList.add('notify');
+}
+console.log('empresas/'+id+'/historial')
+firebase.database().ref('empresas/'+id+'/historial').on('child_added',function(snapshot){
+    console.log("Entro mierma")
+   if(snapshot.val()!=null){
+    this.aumentarNotis();
+   }
+    
+
+
+
+});
+$('#notification').click(function(){
+    console.log("Click");
+    firebase.database().ref("empresas/" + id+"/historial/pruebita"+prueba).set({
+       'asies':"probando"
+    });
+prueba++;
+});
 
 
 function cargarLista(){
