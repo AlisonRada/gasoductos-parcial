@@ -3,7 +3,6 @@ puntaje_max = 0;
 window.onload = function () {
 	//
 	uid = localStorage.uid;
-	console.log("uid: "+uid);
 	//id del cuestionario
 	cid = parseInt(params = document.location.href.split('=')[1]);
 	//id de la empresa
@@ -78,7 +77,6 @@ function cargarCuestionario(){
 				`
 			}
 		} //for de afuera
-		console.log('Puntaje máximo: '+puntaje_max);
 		return puntaje_max;
 		
 	});

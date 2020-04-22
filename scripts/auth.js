@@ -36,10 +36,19 @@ $("#login").click(function() {
 						});						
 					}
 				} else{
-					uid = firebase.auth().currentUser.uid;
-					localStorage.eid = uid;
-					localStorage.uid = null;
-					window.location.href = "empresa.html";
+					firebase.database().ref(`empresas/${firebase.auth().currentUser.uid}`).once("value", snapshot => {
+						if (snapshot.exists()) {
+							uid = firebase.auth().currentUser.uid;
+							localStorage.eid = uid;
+							localStorage.uid = null;
+							window.location.href = "empresa.html";
+						} else{
+							Swal.fire({
+								icon: 'error',
+								title: 'Usuario no existe',
+							});							
+						}
+					});
 				}
 			}); 
 		})
@@ -73,61 +82,77 @@ $("#signup").click(function() {
 	event.preventDefault();
 	username = $("#signUpEmail").val();
 	password = $("#passwdSignUp").val();
-	firebase.auth().createUserWithEmailAndPassword(username, password).catch(function(error) {
-		var errorCode = error.code;
-		var errorMessage = error.message;
-		console.log(errorCode);
-		console.log(errorMessage);
-	});
-	// autenticacion con firebase
-	 firebase.auth().signInWithEmailAndPassword(username, password).catch(function(error) {
-		var errorCode = error.code;
-		var errorMessage = error.message;
-
-		console.log(errorMessage);
-	}); 
-	
 	file = document.querySelector('#foto').files[0];
 	enterprise_name = $("#entName").val();
 	photo_name = null;
+	good = true;
 
-	if(file!=undefined){
-		if(myRegex.test(file.type)){
-			photo_name = enterprise_name
-			const metadata = { contentType: file.type };
-			
-			const task = ref.child(enterprise_name).put(file, metadata);
-			task
-				.then(snapshot => snapshot.ref.getDownloadURL())
-				.catch(console.error);
-		} else {
+	if (!ValidateEmail(username)) {
+		good = false;
+		Swal.fire({
+			icon: 'error',
+			title: 'El correo no corresponde con un formato válido.',
+		});
+	}else if (file!= undefined) {
+		if (!myRegex.test(file.type)) {
 			Swal.fire({
 				icon: 'error',
 				title: 'El archivo debe ser una imagen',
-			});            
+			});
+			good = false
 		}
 	}
-
-	firebase.auth().onAuthStateChanged(function(user) {
-		if (user) {
-			uid = firebase.auth().currentUser.uid;
-			console.log("uid:"+uid);
-			
-			firebase.database().ref("empresas/" + uid).set({
-				"representante": $("#nameUser").val(),
-				"tipo_id": $("#tipo").val(),
-				"nid": $("#id").val(),
-				"empresa": enterprise_name,
-				"foto": photo_name
-			});
-		}
-	});
-	Swal.fire({
-		icon: 'success',
-		title: 'Empresa registrada, ya puede ingresar',
-	});
+	if (good) {
+		firebase.auth().createUserWithEmailAndPassword(username, password).catch(function(error) {
+			var errorCode = error.code;
+			var errorMessage = error.message;
+			console.log(errorCode);
+			console.log(errorMessage);
+		});
+		// autenticacion con firebase
+		 firebase.auth().signInWithEmailAndPassword(username, password).catch(function(error) {
+			var errorCode = error.code;
+			var errorMessage = error.message;
+		}); 
+		
+		
 	
-	logout();
+		if(file!=undefined){
+			if(myRegex.test(file.type)){
+				photo_name = enterprise_name
+				const metadata = { contentType: file.type };
+				
+				const task = ref.child(enterprise_name).put(file, metadata);
+				task
+					.then(snapshot => snapshot.ref.getDownloadURL())
+					.catch(console.error);
+			} else {
+				Swal.fire({
+					icon: 'error',
+					title: 'El archivo debe ser una imagen',
+				});            
+			}
+		}
+	
+		firebase.auth().onAuthStateChanged(function(user) {
+			if (user) {
+				uid = firebase.auth().currentUser.uid;
+				firebase.database().ref("empresas/" + uid).set({
+					"representante": $("#nameUser").val(),
+					"tipo_id": $("#tipo").val(),
+					"nid": $("#id").val(),
+					"empresa": enterprise_name,
+					"foto": photo_name
+				});
+			}
+		});
+		Swal.fire({
+			icon: 'success',
+			title: 'Empresa registrada, ya puede ingresar',
+		});
+		
+		logout();		
+	}
 });
 
 function ValidateEmail(email){
@@ -148,77 +173,95 @@ $("#signUpEmployee").click(function () {
 	nid = $("#idEmployee").val();
 	file = document.querySelector('#fotoEmployee').files[0];
 	photo_name = null;
+	good = true;
 
-	secondaryApp.auth().createUserWithEmailAndPassword(username, password)
-	.then(function(user) {
-		console.log('Dentro del then');
+	if (!ValidateEmail(username)) {
+		good = false;
+		Swal.fire({
+			icon: 'error',
+			title: 'El correo no corresponde con un formato válido.',
+		});
+	} else if (file!= undefined) {
+		if (!myRegex.test(file.type)) {
+			Swal.fire({
+				icon: 'error',
+				title: 'El archivo debe ser una imagen',
+			});
+			good = false
+		}
+	}
+	if (good) {
+		secondaryApp.auth().createUserWithEmailAndPassword(username, password)
+		.then(function(user) {
+			
+			secondaryApp.auth().signInWithEmailAndPassword(username, password).then(function(user){
 		
-		secondaryApp.auth().signInWithEmailAndPassword(username, password).then(function(user){
-	
-			secondaryApp.auth().onAuthStateChanged(function(user) {
-				if (user) {
-					uid = secondaryApp.auth().currentUser.uid;
-					if(file!=undefined){
-						if(myRegex.test(file.type)){
-							photo_name = uid;
-							const metadata = { contentType: file.type };
-							const task = ref.child(uid).put(file, metadata);
-							task
-								.then(snapshot => snapshot.ref.getDownloadURL())
-								.catch(console.error);
-						} else {
-							Swal.fire({
-								icon: 'error',
-								title: 'El archivo debe ser una imagen',
-							});            
+				secondaryApp.auth().onAuthStateChanged(function(user) {
+					if (user) {
+						uid = secondaryApp.auth().currentUser.uid;
+						if(file!=undefined){
+							if(myRegex.test(file.type)){
+								photo_name = uid;
+								const metadata = { contentType: file.type };
+								const task = ref.child(uid).put(file, metadata);
+								task
+									.then(snapshot => snapshot.ref.getDownloadURL())
+									.catch(console.error);
+							} else {
+								Swal.fire({
+									icon: 'error',
+									title: 'El archivo debe ser una imagen',
+								});            
+							}
 						}
+						secondaryApp.database().ref("empleados/" + uid).set({
+							"nombre": nameEmployee,
+							"direccion": addressEmployee,
+							"foto": photo_name,
+							"empresa": localStorage.eid,
+							"habilitado": 1,
+							"tipo_id": $("#tipoEmployee").val(),
+							"id": nid
+						});
+						secondaryApp.database().ref(`empresas/${localStorage.eid}/empleados/${uid}`).update({
+							"email": username
+						});                
 					}
-					secondaryApp.database().ref("empleados/" + uid).set({
-						"nombre": nameEmployee,
-						"direccion": addressEmployee,
-						"foto": photo_name,
-						"empresa": localStorage.eid,
-						"habilitado": 1,
-						"tipo_id": $("#tipoEmployee").val(),
-						"id": nid
-					});
-					secondaryApp.database().ref(`empresas/${localStorage.eid}/empleados/${uid}`).update({
-						"email": username
-					});                
-				}
+				});
+				
+				resetForm("signUpEmployeeForm");
+				Swal.fire({
+					icon: 'success',
+					title: 'Empleado registrado, ya puede ingresar',
+				});
+			}).catch(function(error) {
+				var errorCode = error.code;
+				var errorMessage = error.message;
 			});
 			
-			resetForm("signUpEmployeeForm");
-			Swal.fire({
-				icon: 'success',
-				title: 'Empleado registrado, ya puede ingresar',
-			});
+			secondaryApp.auth().signOut().then(function() {
+				//console.log("Salió");
+			}).catch(function(error) {
+				//console.log("No salió");
+			});;
+		
 		}).catch(function(error) {
 			var errorCode = error.code;
 			var errorMessage = error.message;
+
+			if (errorCode === 'auth/email-already-in-use') {
+				Swal.fire({
+					icon: 'error',
+					title: 'El correo electrónico ya se encuentra en uso',
+				});
+			} else{
+				console.log(errorCode);
+				console.log(errorMessage);
+			}
 		});
 		
-		secondaryApp.auth().signOut().then(function() {
-			console.log("Salió");
-		}).catch(function(error) {
-			console.log("No salió");
-		});;
+	}
 	
-	}).catch(function(error) {
-		var errorCode = error.code;
-		var errorMessage = error.message;
-
-		if (errorCode === 'auth/email-already-in-use') {
-			Swal.fire({
-				icon: 'error',
-				title: 'El correo electrónico ya se encuentra en uso',
-			});
-		} else{
-			console.log(errorCode);
-			console.log(errorMessage);
-		}
-	});
-
 });
 
 function resetForm(name) {

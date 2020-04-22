@@ -36,11 +36,9 @@ window.onload = function () {
 
 function aumentarNotis(){
     const count = Number($bell.getAttribute('data-count')) || 0;
-    console.log(count)
 	$bell.setAttribute('data-count', count + 1);
 	$bell.classList.add('show-count');
     $bell.classList.add('notify');
-    
 }
 
 firebase.database().ref('empresas/'+id+'/historial').on('child_added',function(snapshot){
@@ -48,7 +46,6 @@ firebase.database().ref('empresas/'+id+'/historial').on('child_added',function(s
 	empleado=snapshot.val().Empleado;
 	idempleado=empleado+"";
 
-	
 	cuestionario= snapshot.val().cuestionario;
 	firebase.database().ref('/empleados/'+empleado).once('value').then(function(snapshot2){
 		nombre=snapshot2.val().nombre;
@@ -64,13 +61,11 @@ firebase.database().ref('empresas/'+id+'/historial').on('child_added',function(s
 					  </td> 
 					</tr>
 					`
-
-
 	});
 
 	this.aumentarNotis();
 	Push.create("Cuestionario realizada", {
-		body: "Uno de sus empleados ha realizado una encuesta'?",
+		body: "¡Uno de sus empleados ha realizado un cuestionario!",
 		icon: '/assets/img/natural gas.svg',
 		timeout: 4000,
 		onClick: function () {
@@ -78,10 +73,6 @@ firebase.database().ref('empresas/'+id+'/historial').on('child_added',function(s
 			this.close();
 		}
 	});
-	
-
-
-
 });
 
 
@@ -89,8 +80,6 @@ function limpiarHistorial(){
 	firebase.database().ref("/empresas/"+id+"/historial").remove();
 	$bell.setAttribute('data-count', 0);
 	document.getElementById('historial_body').innerHTML="";
-
-
 }
 
 
@@ -147,7 +136,7 @@ function escribirUsuario(id, cont){
 		tabla.innerHTML+=   `
 		<tr>
 										<td>
-											<img id='empleado${cont}' alt="">
+											<img id='empleado${cont}' width="50px" height="50px" alt="">
 											${empleado.nombre}
 											
 										</td>
